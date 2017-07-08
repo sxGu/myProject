@@ -1,0 +1,64 @@
+1、创建数据库和选择指定的数据库：use db_name 选择使用某个数据库，相当于mysql的use 语句，不同的是mysql仅仅是切换至这个数据库下，mongoDB在存在这个数据库的情况下会切换到指定数据库，如果数据库不存在就创建一个这个名称命名的数据库，此时相当于mysql的create语句，mongoDB默认使用test数据库，就是如果没有特别指定的话，就是使用test数据库
+
+2、查看当前数据库：db
+db命令只能查看当前锁使用的数据库的名称
+
+3、查看所有的数据库： show dbs
+mysql查看所有的数据库使用show databases；mongoDB中使用show dbs命令。不存在数据的数据库是不会被show dbs查出来，即相当于没有数据的数据库并不真的存在。
+
+4、删除数据库： db.dropDatabase()
+这个命令是删除当前数据库，具体是哪个数据可以使用db命令查看
+
+5、删除集合：db.collection.drop();
+show tables命令可以查看db下面的集合名称，使用如上命令删除指定集合
+
+6、插入文档：MongoDB 使用 insert() 或 save() 方法向集合中插入文档，语法如下：
+db.COLLECTION_NAME.insert(document);
+document是类似于json的数据，实质上是binary json ，即二进制json
+不存在这个集合的情况下即创建该集合，使用save也是一样的效果
+
+7、更新文档：update 和 save方法
+update() 方法用于更新已存在的文档。语法格式如下：
+db.collection.update(
+   <query>,
+   <update>,
+   {
+     upsert: <boolean>,
+     multi: <boolean>,
+     writeConcern: <document>
+   }
+)
+参数说明：
+query : update的查询条件，类似sql update查询内where后面的。
+update : update的对象和一些更新的操作符（如$,$inc...）等，也可以理解为sql update查询内set后面的
+upsert : 可选，这个参数的意思是，如果不存在update的记录，是否插入objNew,true为插入，默认是false，不插入。
+multi : 可选，mongodb 默认是false,只更新找到的第一条记录，如果这个参数为true,就把按条件查出来多条记录全部更新。
+writeConcern :可选，抛出异常的级别。
+save() 方法
+save() 方法通过传入的文档来替换已有文档。语法格式如下：
+db.collection.save(
+   <document>,
+   {
+     writeConcern: <document>
+   }
+)
+参数说明：
+document : 文档数据。
+writeConcern :可选，抛出异常的级别。此处以mongoDB给的默认的id，_id这个字段来定位更新哪一条数据，上面插入数据部分是不存在对应的_id的时候做插入操作
+
+
+只更新第一条记录：
+db.col.update( { "count" : { $gt : 1 } } , { $set : { "test2" : "OK"} } ); 
+全部更新：
+db.col.update( { "count" : { $gt : 3 } } , { $set : { "test2" : "OK"} },false,true ); 
+只添加第一条：
+db.col.update( { "count" : { $gt : 4 } } , { $set : { "test5" : "OK"} },true,false ); 
+全部添加加进去:
+db.col.update( { "count" : { $gt : 5 } } , { $set : { "test5" : "OK"} },true,true ); 
+全部更新：
+db.col.update( { "count" : { $gt : 15 } } , { $inc : { "count" : 1} },false,true );
+只更新第一条记录：
+db.col.update( { "count" : { $gt : 10 } } , { $inc : { "count" : 1} },false,false );
+
+
+
